@@ -52,7 +52,7 @@ data['Soil_Type'].value_counts() # categorical?
 fire = data.copy()
 fire.plot(kind='scatter', x='Hillshade_9am', y='Hillshade_Noon', alpha=0.1) # alpha lets us visualize high-density areas
 
-fire['Soil_Type'].value_counts()
+fire['Soil_Type']
 fire['elu_cli'] = [int(str(a)[0]) for a in fire['Soil_Type']]
 fire['elu_geo'] = [int(str(a)[1]) for a in fire['Soil_Type']]
 fire['elu_3'] = [int(str(a)[2]) for a in fire['Soil_Type']]
