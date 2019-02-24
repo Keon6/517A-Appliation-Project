@@ -26,7 +26,7 @@ data.hist(bins = 10, figsize = (20,15))
 
 data.describe()
 
-data['Soil_Type'].value_counts() # categorical?
+data['Soil_Type'] # categorical?
 # based on the USFS Ecological Landtype Units (ELUs) for this study area. 
 # The first digit refers to the climatic zone, the second refers to the geologic. 
 # The third and fourth ELU digits are unique to the mapping unit and have no special meaning to the climatic or geologic zones.
