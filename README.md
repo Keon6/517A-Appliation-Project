@@ -8,6 +8,12 @@ Taking sumbittions... Vote some time soon?
 - ?
 - ?
 
+## About Us...
+### Team Members:
+Kevin Kim, Jonathan Park, Timothy Lung, Eliot Tong
+
+### 
+
 ## Tasks and Milestones
 The application project comprises tasks and milestones:
 milestones are mandatory and have to be applied by all teams
