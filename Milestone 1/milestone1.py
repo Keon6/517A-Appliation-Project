@@ -16,7 +16,7 @@ print(os.listdir("../input"))
 
 data = pd.read_csv("../input/train.csv")
 
-
+# e
 ###### EXPLORING DATA & PREPROCESSING
 data.info() # all non-null integers, n = 7438, d = 12
 
