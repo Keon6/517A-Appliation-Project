@@ -1,6 +1,13 @@
 # 517A-Appliation-Project
 ML class project repo
 
+## Team Name?
+Taking sumbittions... Vote some time soon?
+- Number Crunchers
+- ?
+- ?
+- ?
+
 ## Tasks and Milestones
 The application project comprises tasks and milestones:
 milestones are mandatory and have to be applied by all teams
