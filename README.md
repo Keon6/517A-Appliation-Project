@@ -2,10 +2,10 @@
 ML class project repo
 
 ## Team Name?
-Taking sumbittions... Vote some time soon?
+Taking sumbittions... Vote some time on Wednesday meeting
 - Number Crunchers
-- ?
-- ?
+- Feature Freakers
+- Logistic Aggression
 - ?
 
 ## About Us...
@@ -24,7 +24,7 @@ For a group of 5 students your team will have to complete all milestones and tas
 For a group of 4 students (recommended) your team will have to complete the 5 milestone tasks and 3 tasks (of your choice). 
 For a group of 3 students your team will have to complete the 5 milestone tasks and 1 of the tasks. 
 
-Note, that some mielstones/tasks are demos and some are competitions. It is the teams responsibility to meet the deadlines/sign-up in time for the provided demo slots.
+Note, that some milestones/tasks are demos and some are competitions. It is the teams responsibility to meet the deadlines/sign-up in time for the provided demo slots.
 ### February (due Feb 28):
 [milestone 1 - Setup and Linear Classifier] Create your team and team repository. Register your team https://www.kaggle.com/c/distance-to-fire-points. Compute basic dataset statistics and describe/visualize them. Train and run a linear model (of your choice). Submit the predictions https://www.kaggle.com/c/distance-to-fire-points.
 
