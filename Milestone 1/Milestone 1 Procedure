@@ -1,0 +1,33 @@
+THE APPROACH:
+
+1. Run "Naive" regression model
+ -> Observed low Adj R^2: 0.3 ~
+ -> How about Interaction terms?
+
+2. Check for Interaction Terms. Due to high dimensionality, only a few interaction terms were first tried.
+  -> Adj. R^2 increased significantly to 0.57 ~
+  -> BUT, high multicolinearity observed and difficult to see which features are important
+  -> Most Guass-Markov Assumptions seem to hold except Normality...
+  -> Can we get rid of Multicolinearity?
+
+3. kernel PCA: Inhomogenuous Quadratic and RBF Kernel tried
+a) Inhomogenuous Quadratic kernel PCA:
+-> 3999 features
+
+b) RBF kernel PCA:
+-> n feaures
+
+4. kernel PCA Regression Model
+a) Quadratic kernel:
+ -> Adj. R^2: 0.88 (GOOD!)
+ -> Most Gauss-Markov Assumptions hold
+ -> Normality still doesn't hold : Fat-tail Distributed (BAD!)
+ -> Solutions for non-normality?
+ # TODO:
+    - Robust Reg (ie GLM) | Bootstrap and re-train | Ignore
+
+b) RBF kernel:
+ #TODO: Seem to get NA values for regression (?) WHY???
+
+# TODO:
+5. Get rid of irrelevant PC's using t-test (any may be partial F-test for verification afterwards)
