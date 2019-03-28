@@ -20,16 +20,21 @@ class LocalGaussianProcessClassifier:
         self.k = k
         self.kernel_map = {
             "Matern": Matern(
-                kernel_hyperparams[0], kernel_hyperparams[1],
-                kernel_hyperparams[2]
+                length_scale=kernel_hyperparams[0],
+                length_scale_bounds=kernel_hyperparams[1],
+                nu=kernel_hyperparams[2]
             ),
             "RationalQuadratic": RationalQuadratic(
-                kernel_hyperparams[0], kernel_hyperparams[1],
-                kernel_hyperparams[2], kernel_hyperparams[3]
+                length_scale=kernel_hyperparams[0],
+                length_scale_bounds=kernel_hyperparams[1],
+                alpha=kernel_hyperparams[2],
+                alpha_bounds=kernel_hyperparams[3]
             ),
             "ExpSineSquared": ExpSineSquared(
-                kernel_hyperparams[0], kernel_hyperparams[1],
-                kernel_hyperparams[2], kernel_hyperparams[3]
+                length_scale=kernel_hyperparams[0],
+                length_scale_bounds=kernel_hyperparams[1],
+                periodicity=kernel_hyperparams[2],
+                periodicity_bounds=kernel_hyperparams[3]
             )
         }
 
@@ -56,7 +61,7 @@ class LocalGaussianProcessClassifier:
             Y = np.asarray(Y_tr)[index_list]
             if sum(Y) == 0:
                 Y_prediction.append(0)
-            elif sum(Y) == 100:
+            elif sum(Y) == len(Y):
                 Y_prediction.append(1)
             else:
                 model = model.fit(X, Y)
@@ -115,7 +120,7 @@ class LGPC_CV:
         """
         cv_scores = []
         splits = self.split_method(self.n_splits)
-        for tv_index, val_index in splits.split(X):
+        for tv_index, val_index in splits.split(X, Y):
             X_tv, Y_tv = X[tv_index], Y[tv_index]
             X_val, Y_val = X[val_index], Y[val_index]
             cv_scores.append(self.model.test_score(X_tv, Y_tv, X_val, Y_val, self.score_criteria))
@@ -158,7 +163,11 @@ class LGPC_GridSearchCV:
                     model = LocalGaussianProcessClassifier(kernel_hyperparams=kernel_hyperparams,
                                                            kernel_type=kernel_type, k=k)
 
-                    scores[(kernel_type, kernel_hyperparams, k)] = \
+                    # scores[kernel_type, kernel_hyperparams, k] = 0
+                    # print(kernel_type, kernel_hyperparams, k)
+                    # print(LGPC_CV(model=model, score_criteria=self.score_criteria,
+                    #             n_splits=self.n_splits, split_method=self.split_method).run_cv(X, Y))
+                    scores[f"{kernel_type}, {kernel_hyperparams}, {k}"] = \
                         LGPC_CV(model=model, score_criteria=self.score_criteria,
                                 n_splits=self.n_splits, split_method=self.split_method).run_cv(X, Y)
 
@@ -187,36 +196,47 @@ class LGPC_GridSearchCV:
                     model = LocalGaussianProcessClassifier(kernel_hyperparams=kernel_hyperparams,
                                                            kernel_type=kernel_type, k=k)
 
-                    scores[(kernel_type, kernel_hyperparams, k)] = \
+                    # scores[kernel_type, kernel_hyperparams, k] = 0
+                    # print(kernel_type, kernel_hyperparams, k)
+                    # print(LGPC_CV(model=model, score_criteria=self.score_criteria,
+                    #             n_splits=self.n_splits, split_method=self.split_method).run_cv(X, Y))
+                    scores[f"{kernel_type}, {kernel_hyperparams}, {k}"] = \
                         LGPC_CV(model=model, score_criteria=self.score_criteria,
                                 n_splits=self.n_splits, split_method=self.split_method).run_cv(X, Y)
         return scores
 
+
 # example
-n = 100  # number of data points
+n = 400  # number of data points
 d = 5  # dimensions
-X = 100*np.random.random((n, d))-50
-Y = np.sign(np.sign(2*np.random.random((n, 1))-1)+0.1)  # y in {-1, +1}
+X = 10*np.random.random((n, d))-5
+Y = np.round((np.sign(np.sign(2*np.random.random((n, 1))-1)+0.1)+1)/2)  # y in {0, +1}
 
 # Model Building and Predicting
-X_test = 100*np.random.random((70, d))-50  # test data
-model = LocalGaussianProcessClassifier(kernel_hyperparams=[1, (0.01, 5), 1.5], kernel_type="Matern", k=25)
+X_test = 10*np.random.random((20, d))-5  # test data
+model = LocalGaussianProcessClassifier(kernel_hyperparams=[1, (0.01, 5), 1.5, None], kernel_type="Matern", k=5)
 Y_test_predictions = model.predict(X_tr=X, Y_tr=Y, X_te=X_test)
-predictions = model.predict(X_tr=X, Y_tr=Y, X_te=X_test)
 training_score = model.score(X_tr=X, Y_tr=Y, score_criteria=roc_auc_score)
+print("----- Model Building -----")
+print("Predictions: ", Y_test_predictions)
+print("AUC: ", training_score)
 
 # CV
 CV = LGPC_CV(model=model, score_criteria=roc_auc_score, n_splits=5, split_method=StratifiedKFold)
 cv_scores = CV.run_cv(X=X, Y=Y)
+print("----- CV -----")
+print("CV AUC:", cv_scores)
 
 # GridSearch CV
 param_grid = {
-    "kernel_hyperparams": [[1.0, (0.001, 10), 0.5], [1.0, (0.01, 10), 2.5], [2.0, (0.01, 5), float("inf")]],
+    "kernel_hyperparams": [[1.0, (0.001, 10), 0.5, None], [1.0, (0.01, 10), 2.5, None], [2.0, (0.01, 5), 1.5, None]],
     "kernel_type": ["Matern"],
-    "k": [100, 150]
+    "k": [5]
 }
 grid_search_cv = LGPC_GridSearchCV(hyp_test="t", param_grid=param_grid,
                                    score_criteria=roc_auc_score, n_splits=5, split_method=StratifiedKFold)
 scores_dict = grid_search_cv.run_raw(X, Y)
-optimal_hyperparameters = grid_search_cv.run(X, Y)
+# optimal_hyperparameters = grid_search_cv.run(X, Y)
 
+print("----- Grid Search CV -----")
+print("CV AUC for each Combination:", scores_dict)
