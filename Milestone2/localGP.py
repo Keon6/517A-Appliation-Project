@@ -171,6 +171,26 @@ class LGPC_GridSearchCV:
         }
         return optimal_hyperparams
 
+    def run_raw(self, X, Y):
+        """
+        returns the dictionary for scores insead of of optimal hyperparameters
+        :param X:
+        :param Y:
+        :return: returns the dictionary for scores
+        """
+        scores = dict()
+
+        # Run CV on all combinations & save scores
+        for kernel_type in self.param_grid["kernel_type"]:
+            for kernel_hyperparams in self.param_grid["kernel_hyperparams"]:
+                for k in self.param_grid["k"]:
+                    model = LocalGaussianProcessClassifier(kernel_hyperparams=kernel_hyperparams,
+                                                           kernel_type=kernel_type, k=k)
+
+                    scores[(kernel_type, kernel_hyperparams, k)] = \
+                        LGPC_CV(model=model, score_criteria=self.score_criteria,
+                                n_splits=self.n_splits, split_method=self.split_method).run_cv(X, Y)
+        return scores
 
 # example
 n = 100  # number of data points
@@ -197,5 +217,6 @@ param_grid = {
 }
 grid_search_cv = LGPC_GridSearchCV(hyp_test="t", param_grid=param_grid,
                                    score_criteria=roc_auc_score, n_splits=5, split_method=StratifiedKFold)
+scores_dict = grid_search_cv.run_raw(X, Y)
 optimal_hyperparameters = grid_search_cv.run(X, Y)
 
